@@ -75,6 +75,35 @@ std::string base64Encode2Bytes(char* bytes){
 }
 
 /*
+Function base64Encode1Byte:
+  Encodes a single byte sent to it into Base64. Used when the end of a string is
+  being encode and the tsring is of a length not divisible by 3. Since Base64
+  encodes in 3 byte sections, two padding chars, "==", must be added to take the
+  place of the missing bits.
+
+Arguments:
+  char byte - char of the byte to be encoded
+
+Returns:
+  std::string - string of length 4 of the encoded bytes including padding 
+*/
+std::string base64Encode1Byte(char byte){
+  std::string encoded;
+
+  //first 6 bits of the byte
+  encoded += getBase64Char((byte >> 2) & 0x3F); 
+
+  //last 2 bits of the byte
+  encoded += getBase64Char((byte << 4) & 0x30);
+
+  //add the padding chars since there is no byte 2 or 3
+  encoded += "==";
+
+  return encoded;
+
+}
+
+/*
 Function base64Encode:
   Encodes a series of bytes specified by the arguments into a string of Base64
   chars that will represent them
@@ -88,7 +117,7 @@ Returns:
 
 */
 std::string base64Encode( const unsigned char* input,
-              const unsigned long len){
+                          const unsigned long len){
   std::string encoded;
 
   return encoded;
@@ -136,6 +165,15 @@ int main(int argc, char** argv){
   testStr2[0] = 'x';
   testStr2[1] = 'y';
   assert(base64Encode2Bytes(testStr2) == "eHk=");
+
+  //test5, encode('a') == "YQ=="
+  char testStr;
+  testStr = 'a';
+  assert(base64Encode1Byte(testStr) == "YQ==");
+
+  //test6, encode('z') == "eg=="
+  testStr = 'z';
+  assert(base64Encode1Byte(testStr) == "eg==");
 
   std::cout << "Tests pass!" << std::endl;
 
