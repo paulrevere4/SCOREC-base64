@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <cassert>
+#include <stdlib.h>
 
 
 static const std::string base64EncodeTable =  "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -22,7 +23,8 @@ Function base64Encode3Bytes:
   Encodes 3 bytes sent to it into Base64
 
 Arguments:
-  char* bytes - char of array of bytes to be encoded - MUST BE SIZE 3
+  char* bytes - char of array of bytes to be encoded - the first three positions
+                will be accessed so len(bytes) must be >= 3
 
 Returns:
   std::string - string of length 4 of the encoded bytes
@@ -54,7 +56,8 @@ Function base64Encode2Bytes:
   place of the missing byte.
 
 Arguments:
-  char* bytes - char array of bytes to be encoded - MUST BE SIZE 2
+  char* bytes - char array of bytes to be encoded, the first two positions
+                will be accessed so len(bytes) must be >= 2
 
 Returns:  
   std::string - string of length 4 of the encoded bytes including padding
@@ -105,7 +108,6 @@ std::string base64Encode1Byte (char byte) {
   encoded += "==";
 
   return encoded;
-
 }
 
 /*
@@ -119,7 +121,6 @@ Arguments:
 
 Returns:
   std::string - Base64 encoded string of the input bytes
-
 */
 std::string base64Encode (const char* input,
                           const unsigned long len ) {
@@ -128,8 +129,8 @@ std::string base64Encode (const char* input,
   char* inputChars = (char*)malloc(3*sizeof(char));
   unsigned int index = 0;
 
-  //encode all the string in 3 byte sections, don't encode the last 1 or 2 
-  // bytes if the len is not divisible by 3
+  //encode all the string in 3 byte sections, this loop won't encode the last
+  // 1 or 2 bytes if the len is not divisible by 3
   for ( ; index <= len - 3; index += 3 ) {
     inputChars[0] = input[index];
     inputChars[1] = input[index+1];
@@ -140,8 +141,6 @@ std::string base64Encode (const char* input,
   //encode the last 2 bytes if there are 2 bytes left at the end of the string
   // i.e. if (len % 3 == 2)
   if ( len - index == 2 ) {
-    free(inputChars);
-    inputChars = (char*)malloc(2*sizeof(char));
     inputChars[0] = input[index];
     inputChars[1] = input[index+1];
     encoded += base64Encode2Bytes(inputChars);
@@ -151,11 +150,12 @@ std::string base64Encode (const char* input,
   //encode the last 1 byte if there is one byte left at the end of the string
   // i.e. if (len % 3 == 1)
   if ( len - index == 1 ) {
-    free(inputChars);
     char inputChar = input[index];
     encoded += base64Encode1Byte(inputChar);
     index++;
   }
+
+  free(inputChars);
 
   return encoded;
 }
@@ -254,7 +254,7 @@ int main (int argc, char** argv) {
   assert(base64Encode(testStr7, 7) == "dHV2d3h5eg==");
 
   //test11, encode({'a','b','c','d','e','f','g','h'}) == "YWJjZGVmZ2g="
-  char* testStr8 = (char*)malloc(7*sizeof(char));
+  char* testStr8 = (char*)malloc(8*sizeof(char));
   testStr8[0] = 'a';
   testStr8[1] = 'b';
   testStr8[2] = 'c';
@@ -276,6 +276,12 @@ int main (int argc, char** argv) {
   testStr8[7] = 'z';
   assert(base64Encode(testStr8, 8) == "c3R1dnd4eXo=");
 
+  free(testStr3);
+  free(testStr2);
+  free(testStr6);
+  free(testStr7);
+  free(testStr8);
+  
   std::cout << "Tests pass!" << std::endl;
 
   return 0;
