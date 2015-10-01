@@ -11,8 +11,10 @@ static const std::string base64EncodeTable =  "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 Function getBase64Char:
   gets the char at the index given to it from the encode table
 */
-char getBase64Char(int index){
+char getBase64Char (int index) {
+
   return base64EncodeTable[index];
+
 }
 
 /*
@@ -25,7 +27,8 @@ Arguments:
 Returns:
   std::string - string of length 4 of the encoded bytes
 */
-std::string base64Encode3Bytes(char* bytes){
+std::string base64Encode3Bytes (char* bytes) {
+
   std::string encoded;
 
   //first 6 bits of byte1
@@ -56,7 +59,8 @@ Arguments:
 Returns:  
   std::string - string of length 4 of the encoded bytes including padding
 */
-std::string base64Encode2Bytes(char* bytes){
+std::string base64Encode2Bytes (char* bytes) {
+
   std::string encoded;
 
   //first 6 bits of byte1
@@ -87,7 +91,8 @@ Arguments:
 Returns:
   std::string - string of length 4 of the encoded bytes including padding 
 */
-std::string base64Encode1Byte(char byte){
+std::string base64Encode1Byte (char byte) {
+
   std::string encoded;
 
   //first 6 bits of the byte
@@ -116,9 +121,41 @@ Returns:
   std::string - Base64 encoded string of the input bytes
 
 */
-std::string base64Encode( const unsigned char* input,
-                          const unsigned long len){
+std::string base64Encode (const char* input,
+                          const unsigned long len ) {
+
   std::string encoded;
+  char* inputChars = (char*)malloc(3*sizeof(char));
+  unsigned int index = 0;
+
+  //encode all the string in 3 byte sections, don't encode the last 1 or 2 
+  // bytes if the len is not divisible by 3
+  for ( ; index <= len - 3; index += 3 ) {
+    inputChars[0] = input[index];
+    inputChars[1] = input[index+1];
+    inputChars[2] = input[index+2];
+    encoded += base64Encode3Bytes(inputChars);
+  }
+
+  //encode the last 2 bytes if there are 2 bytes left at the end of the string
+  // i.e. if (len % 3 == 2)
+  if ( len - index == 2 ) {
+    free(inputChars);
+    inputChars = (char*)malloc(2*sizeof(char));
+    inputChars[0] = input[index];
+    inputChars[1] = input[index+1];
+    encoded += base64Encode2Bytes(inputChars);
+    index += 2;
+  }
+
+  //encode the last 1 byte if there is one byte left at the end of the string
+  // i.e. if (len % 3 == 1)
+  if ( len - index == 1 ) {
+    free(inputChars);
+    char inputChar = input[index];
+    encoded += base64Encode1Byte(inputChar);
+    index++;
+  }
 
   return encoded;
 }
@@ -133,14 +170,15 @@ Arguments:
 Returns:
   std::string - decoded string of bytes from the encoded data
 */
-std::string base64Decode(std::string encoded){
+std::string base64Decode (std::string encoded) {
+
   std::string decoded;
   
   return decoded;
 }
 
 
-int main(int argc, char** argv){
+int main (int argc, char** argv) {
 
   //test1, encode({'a','a','a'}) == "YWFh"
   char* testStr3 = (char*)malloc(3*sizeof(char));
@@ -174,6 +212,69 @@ int main(int argc, char** argv){
   //test6, encode('z') == "eg=="
   testStr = 'z';
   assert(base64Encode1Byte(testStr) == "eg==");
+
+  //test7, encode({'a','b','c','d','e','f'}) == "YWJjZGVm"
+  char* testStr6 = (char*)malloc(6*sizeof(char));
+  testStr6[0] = 'a';
+  testStr6[1] = 'b';
+  testStr6[2] = 'c';
+  testStr6[3] = 'd';
+  testStr6[4] = 'e';
+  testStr6[5] = 'f';
+  assert(base64Encode(testStr6, 6) == "YWJjZGVm");
+
+  //test8, encode({'u','v','w','x','y','z'}) == "dXZ3eHl6"
+  testStr6[0] = 'u';
+  testStr6[1] = 'v';
+  testStr6[2] = 'w';
+  testStr6[3] = 'x';
+  testStr6[4] = 'y';
+  testStr6[5] = 'z';
+  assert(base64Encode(testStr6, 6) == "dXZ3eHl6");
+
+  //test9, encode({'a','b','c','d','e','f','g'}) == "YWJjZGVmZw=="
+  char* testStr7 = (char*)malloc(7*sizeof(char));
+  testStr7[0] = 'a';
+  testStr7[1] = 'b';
+  testStr7[2] = 'c';
+  testStr7[3] = 'd';
+  testStr7[4] = 'e';
+  testStr7[5] = 'f';
+  testStr7[6] = 'g';
+  assert(base64Encode(testStr7, 7) == "YWJjZGVmZw==");
+
+  //test10, encode({'t','u','v','w','x','y','z'}) == "dHV2d3h5eg=="
+  testStr7[0] = 't';
+  testStr7[1] = 'u';
+  testStr7[2] = 'v';
+  testStr7[3] = 'w';
+  testStr7[4] = 'x';
+  testStr7[5] = 'y';
+  testStr7[6] = 'z';
+  assert(base64Encode(testStr7, 7) == "dHV2d3h5eg==");
+
+  //test11, encode({'a','b','c','d','e','f','g','h'}) == "YWJjZGVmZ2g="
+  char* testStr8 = (char*)malloc(7*sizeof(char));
+  testStr8[0] = 'a';
+  testStr8[1] = 'b';
+  testStr8[2] = 'c';
+  testStr8[3] = 'd';
+  testStr8[4] = 'e';
+  testStr8[5] = 'f';
+  testStr8[6] = 'g';
+  testStr8[7] = 'h';
+  assert(base64Encode(testStr8, 8) == "YWJjZGVmZ2g=");
+
+  //test12, encode({'s','t','u','v','w','x','y','z'}) == "c3R1dnd4eXo="
+  testStr8[0] = 's';
+  testStr8[1] = 't';
+  testStr8[2] = 'u';
+  testStr8[3] = 'v';
+  testStr8[4] = 'w';
+  testStr8[5] = 'x';
+  testStr8[6] = 'y';
+  testStr8[7] = 'z';
+  assert(base64Encode(testStr8, 8) == "c3R1dnd4eXo=");
 
   std::cout << "Tests pass!" << std::endl;
 
