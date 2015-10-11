@@ -114,7 +114,16 @@ void runEncodeTests () {
 
 void runDecodeTests () {
 
-  //test1, decode4({'Y','W','F','h'}) == "aaa"
+  //test1, test decode table
+  std::string base64CharsNoEquals = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                                    "abcdefghijklmnopqrstuvwxyz"
+                                    "0123456789+/";
+  for ( unsigned int i = 0; i < base64CharsNoEquals.length(); i++ ) {
+    unsigned int base64Code = getDecodedBase64Char(base64CharsNoEquals[i]);
+    assert(i == base64Code);
+  }
+
+  //test2, decode4({'Y','W','F','h'}) == "aaa"
   char* testStr4 = (char*)malloc(4*sizeof(char));
   testStr4[0] = 'Y';
   testStr4[1] = 'W';
@@ -122,19 +131,21 @@ void runDecodeTests () {
   testStr4[3] = 'h';
   assert(base64Decode4Bytes(testStr4) == "aaa");
 
-  //test2, decode4({'Y','W','F','='}) == "aa"
+  //test3, decode4({'Y','W','F','='}) == "aa"
   testStr4[0] = 'Y';
   testStr4[1] = 'W';
   testStr4[2] = 'F';
   testStr4[3] = '=';
   assert(base64Decode4Bytes(testStr4) == "aa");
 
-  //test3, decode4({'Y','W','=','='}) == "a"
+  //test4, decode4({'Y','W','=','='}) == "a"
   testStr4[0] = 'Y';
   testStr4[1] = 'W';
   testStr4[2] = '=';
   testStr4[3] = '=';
   assert(base64Decode4Bytes(testStr4) == "a");
+
+  free(testStr4);
 
   std::cout << "Decode tests pass!" << std::endl;
 }

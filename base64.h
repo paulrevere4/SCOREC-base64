@@ -13,6 +13,16 @@ char getBase64Char (int index);
 // ===========================================================================
 
 /*
+Function getDecodedBase64Char:
+  gets the Base64 value of an ASCII char sent to it. Uses the  
+  base64DecodeTable. We have to do this because our Base64 string is
+  represented as ASCII chars which have different codes than Base64.
+*/
+char getDecodedBase64Char (unsigned char c);
+
+// ===========================================================================
+
+/*
 Function base64Encode3Bytes:
   Encodes 3 bytes sent to it into Base64
 
