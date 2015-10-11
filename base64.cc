@@ -9,16 +9,19 @@
 // ===========================================================================
 // ===========================================================================
 
-
 static const std::string base64EncodeTable =  "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
                                               "abcdefghijklmnopqrstuvwxyz"
                                               "0123456789+/=";
+
+// ===========================================================================
 
 char getBase64Char (int index) {
 
   return base64EncodeTable[index];
 
 }
+
+// ===========================================================================
 
 std::string base64Encode3Bytes (char* bytes) {
 
@@ -28,10 +31,10 @@ std::string base64Encode3Bytes (char* bytes) {
   encoded += getBase64Char((bytes[0] >> 2) & 0x3F); 
 
   //last 2 bits of byte1 and the first 4 of byte2
-  encoded += getBase64Char( ((bytes[0] << 4) & 0x30)|((bytes[1] >> 4) & 0x0F));
+  encoded += getBase64Char( ((bytes[0] << 4) & 0x30) | ((bytes[1] >> 4) & 0x0F));
 
   //last 4 bits of byte2 and the first 2 of byte3
-  encoded += getBase64Char( ((bytes[1] << 2) & 0x3C)|((bytes[2] >> 6) & 0x03));
+  encoded += getBase64Char( ((bytes[1] << 2) & 0x3C) | ((bytes[2] >> 6) & 0x03));
 
   //last 6 of byte3
   encoded += getBase64Char( bytes[2] & 0x3F ); 
@@ -39,6 +42,7 @@ std::string base64Encode3Bytes (char* bytes) {
   return encoded;
 }
 
+// ===========================================================================
 
 std::string base64Encode2Bytes (char* bytes) {
 
@@ -48,7 +52,7 @@ std::string base64Encode2Bytes (char* bytes) {
   encoded += getBase64Char((bytes[0] >> 2) & 0x3F); 
 
   //last 2 bits of byte1 combined with the the first 4 of byte2
-  encoded += getBase64Char( ((bytes[0] << 4) & 0x30)|((bytes[1] >> 4) & 0x0F));
+  encoded += getBase64Char( ((bytes[0] << 4) & 0x30) | ((bytes[1] >> 4) & 0x0F));
 
   //last 4 bits of byte2 combined with the first 2 of byte3
   encoded += getBase64Char( ((bytes[1] << 2) & 0x3C) );
@@ -59,6 +63,7 @@ std::string base64Encode2Bytes (char* bytes) {
   return encoded;
 }
 
+// ===========================================================================
 
 std::string base64Encode1Byte (char byte) {
 
@@ -75,6 +80,8 @@ std::string base64Encode1Byte (char byte) {
 
   return encoded;
 }
+
+// ===========================================================================
 
 
 std::string base64Encode (const char* input,
@@ -115,6 +122,16 @@ std::string base64Encode (const char* input,
   return encoded;
 }
 
+// ===========================================================================
+
+std::string base64Decode4Bytes (char* bytes){
+  std::string decoded;
+
+  return decoded;
+}
+
+// ===========================================================================
+
 // TODO: PR4: Implement
 std::string base64Decode (std::string encoded) {
 
@@ -123,3 +140,5 @@ std::string base64Decode (std::string encoded) {
   return decoded;
 }
 
+// ===========================================================================
+// ===========================================================================

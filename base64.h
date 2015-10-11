@@ -1,11 +1,16 @@
 #ifndef BASE64_H
 #define BASE64_H
 
+// ===========================================================================
+// ===========================================================================
+
 /*
 Function getBase64Char:
   gets the char at the index given to it from the encode table
 */
 char getBase64Char (int index);
+
+// ===========================================================================
 
 /*
 Function base64Encode3Bytes:
@@ -19,6 +24,9 @@ Returns:
   std::string - string of length 4 of the encoded bytes
 */
 std::string base64Encode3Bytes (char* bytes);
+
+// ===========================================================================
+
 /*
 Function base64Encode2Bytes:
   Encodes 2 bytes sent to it into Base64. Used a when the end of a string is 
@@ -35,6 +43,8 @@ Returns:
 */
 std::string base64Encode2Bytes (char* bytes);
 
+// ===========================================================================
+
 /*
 Function base64Encode1Byte:
   Encodes a single byte sent to it into Base64. Used when the end of a string is
@@ -49,6 +59,8 @@ Returns:
   std::string - string of length 4 of the encoded bytes including padding 
 */
 std::string base64Encode1Byte (char byte);
+
+// ===========================================================================
 
 /*
 Function base64Encode:
@@ -65,6 +77,27 @@ Returns:
 std::string base64Encode (const char* input,
                           const unsigned long len );
 
+// ===========================================================================
+
+/*
+Function base64Decode4Bytes:
+  Decodes 4 bytes send to it from Base64 to plaintext,
+
+Arguments:
+  char* bytes - char array of bytes to be decoded into plaintext, the first
+                four positions will be accessed so len(bytes) must be >= 4
+
+Returns:
+  std::string - string of length 1, 2, or 3 based on the amount of padding in
+                the chars sent to the function. len(string) will be 1 if the
+                input has two padding chars ('='*2). len(string) will be 2 if
+                the input has one padding char ('='). len(string) will be 3
+                if the input has no padding chars.
+*/
+std::string base64Decode4Bytes (char* bytes);
+
+// ===========================================================================
+
 /*
 TODO: PR4: Implement
 
@@ -78,5 +111,8 @@ Returns:
   std::string - decoded string of bytes from the encoded data
 */
 std::string base64Decode (std::string encoded);
+
+// ===========================================================================
+// ===========================================================================
 
 #endif

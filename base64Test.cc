@@ -5,7 +5,7 @@
 
 #include "base64.h"
 
-void runTests () {
+void runEncodeTests () {
 
   //test1, encode3({'a','a','a'}) == "YWFh"
   char* testStr3 = (char*)malloc(3*sizeof(char));
@@ -109,13 +109,40 @@ void runTests () {
   free(testStr7);
   free(testStr8);
 
+  std::cout << "Encode tests pass!" << std::endl;
+}
+
+void runDecodeTests () {
+
+  //test1, decode4({'Y','W','F','h'}) == "aaa"
+  char* testStr4 = (char*)malloc(4*sizeof(char));
+  testStr4[0] = 'Y';
+  testStr4[1] = 'W';
+  testStr4[2] = 'F';
+  testStr4[3] = 'h';
+  assert(base64Decode4Bytes(testStr4) == "aaa");
+
+  //test2, decode4({'Y','W','F','='}) == "aa"
+  testStr4[0] = 'Y';
+  testStr4[1] = 'W';
+  testStr4[2] = 'F';
+  testStr4[3] = '=';
+  assert(base64Decode4Bytes(testStr4) == "aa");
+
+  //test3, decode4({'Y','W','=','='}) == "a"
+  testStr4[0] = 'Y';
+  testStr4[1] = 'W';
+  testStr4[2] = '=';
+  testStr4[3] = '=';
+  assert(base64Decode4Bytes(testStr4) == "a");
+
+  std::cout << "Decode tests pass!" << std::endl;
 }
 
 int main (int argc, char** argv) {
     
-  runTests();
-
-  std::cout << "Tests pass!" << std::endl;
+  runEncodeTests();
+  runDecodeTests();
 
   return 0;
 }
