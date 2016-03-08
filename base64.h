@@ -84,8 +84,7 @@ Arguments:
 Returns:
   std::string - Base64 encoded string of the input bytes
 */
-std::string base64Encode (const char* input,
-                          const unsigned long len );
+std::string base64Encode (const char* input, const unsigned long len );
 
 // ===========================================================================
 
@@ -109,8 +108,6 @@ std::string base64Decode4Bytes (char* bytes);
 // ===========================================================================
 
 /*
-TODO: PR4: Implement
-
 Function base64Decode:
   Decodes a string of Base64 chars to the bytes they represent
 
